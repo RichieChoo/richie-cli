@@ -14,10 +14,14 @@ const hint = require('../lib/hint.js');
 const clearConsole = require('../lib/clearConsole');
 const checkVersion = require('../lib/checkVersion');
 const cmdSystem = require('../lib/cmdSystem');
-
+const { exec } = require('child_process');
 const spinner = new ora();
 
+
+
+
 let answers_all = {};
+
 
 commander
     .version(richie_package.version)
@@ -36,8 +40,17 @@ new Promise(function (resolve, reject) {
         spinner.stop();
         resolve()
     }, (version) => {
-        hint.fail(spinner, `请将richie-cli更新到最新版本(v${version})`)
-        process.exit();
+        exec('ls',(error, stdout, stderr) => {
+            if (error) {
+                hint.fail(spinner, `自动更新失败，请手动更新到${version}版本`);
+            }
+
+            spinner.start("\n更新中"+"\n"+stdout);
+            // spinner.stop("请重新");
+            process.exit();
+        });
+
+
     })
 })
 // commander init ( richie init )

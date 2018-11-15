@@ -59,14 +59,14 @@ new Promise(function (resolve, reject) {
             if (commander.init) {
                 inquirer.prompt([
                     question.name,
+                    question.version,
                     question.port,
                     question.richie_package_manager,
-                    question.plugin
                 ]).then(function (answers) {
-                    answers_all.name = answers.name
-                    answers_all.port = answers.port
-                    answers_all.richie_package_manager = answers.richie_package_manager
-                    answers_all.plugin = answers.plugin
+                    answers_all.name = answers.name;
+                    answers_all.version = answers.version;
+                    answers_all.port = answers.port;
+                    answers_all.richie_package_manager = answers.richie_package_manager;
                     resolve();
                 });
             }
@@ -94,10 +94,10 @@ new Promise(function (resolve, reject) {
                 if (err) {
                     hint.fail(spinner, `package.json读取失败！`, err)
                 }
-                let _data = JSON.parse(data.toString())
-                _data.name = answers_all.name
-                _data.version = '0.0.0'
-                _data.port = answers_all.port
+                let _data = JSON.parse(data.toString());
+                _data.name = answers_all.name;
+                _data.version = answers_all.version;
+                _data.port = answers_all.port;
                 let str = JSON.stringify(_data, null, 4);
                 // 写入
                 fs.writeFile(`${process.cwd()}/${answers_all.name}/package.json`, str, function (err) {
@@ -106,7 +106,7 @@ new Promise(function (resolve, reject) {
                         spinner.clear();
                         resolve();
                     } else {
-                        hint.fail(spinner, `package.json写入失败！`, err)
+                        hint.fail(spinner, `package.json写入失败！`, err);
                     }
                 })
             });
@@ -115,8 +115,8 @@ new Promise(function (resolve, reject) {
     // 安装项目依赖
     .then(function () {
         return new Promise((resolve, reject) => {
-            let installStr = `正在使用${chalk.greenBright(answers_all.richie_package_manager)}安装依赖...`
-            spinner.start([installStr])
+            let installStr = `正在使用${chalk.greenBright(answers_all.richie_package_manager)}安装依赖...`;
+            spinner.start([installStr]);
             // 根据不同的选项选择安装方式
             let type_install = '';
             switch (answers_all.richie_package_manager) {
@@ -132,8 +132,8 @@ new Promise(function (resolve, reject) {
             }
             cmdSystem([`cd ${answers_all.name}`, type_install], spinner, installStr)
                 .then(() => {
-                    spinner.succeed(['项目依赖安装完成.'])
-                    spinner.clear()
+                    spinner.succeed(['项目依赖安装完成.']);
+                    spinner.clear();
                     resolve()
                 })
         })
@@ -143,10 +143,9 @@ new Promise(function (resolve, reject) {
     .then(function () {
         setTimeout(function () {
             hint.line()
-            hint.print('green', `🎉  欢迎使用richie,请继续完成以下操作:`, 'bottom')
-            hint.print('cyan', ` $ cd ${answers_all.name}`)
-            hint.print('cyan', ` $ npm run dev`, 'bottom')
-            hint.print('green', ` [使用手册] https://codexu.github.io/`)
+            hint.print('green', `🎉  欢迎使用richie-cli,请继续完成以下操作:`, 'bottom');
+            hint.print('cyan', ` $ cd ${answers_all.name}`);
+            hint.print('cyan', ` $ npm run dev`, 'bottom');
             process.exit()
         }, 500)
     })

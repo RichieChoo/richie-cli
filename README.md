@@ -1,6 +1,6 @@
 ## 简介
 
-richie-cli是一个快速生成richie项目的生成器，类似于vue-cli。将richie-cli安装在全局环境下，提供了终端里的 `richie`命令。
+richie-cli是一个快速生成Ant Design Pro 实例项目的生成器，类似于vue-cli。将richie-cli安装在全局环境下，提供了终端里的 `richie`命令。
 
 
 ## 安装

@@ -1,6 +1,6 @@
 {
   "name": "richie-cli",
-  "version": "1.1.2",
+  "version": "1.1.6",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "test"
+    "url": "https://github.com/RichieChoo/richie-cli"
   },
   "author": "richie",
   "license": "ISC",

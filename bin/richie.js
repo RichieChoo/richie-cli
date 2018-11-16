@@ -14,7 +14,6 @@ const hint = require('../lib/hint.js');
 const clearConsole = require('../lib/clearConsole');
 const checkVersion = require('../lib/checkVersion');
 const cmdSystem = require('../lib/cmdSystem');
-const { exec } = require('child_process');
 const spinner = new ora();
 
 
@@ -22,7 +21,7 @@ const spinner = new ora();
 
 let answers_all = {};
 
-
+// 必须在.parse()之前，因为node的emit()是即时的
 commander
     .version(richie_package.version)
     .option('-i, init', '初始化richie项目');
@@ -40,15 +39,10 @@ new Promise(function (resolve, reject) {
         spinner.stop();
         resolve()
     }, (version) => {
-        exec('ls',(error, stdout, stderr) => {
-            if (error) {
-                hint.fail(spinner, `自动更新失败，请手动更新到${version}版本`);
-            }
-
-            spinner.start("\n更新中"+"\n"+stdout);
-            // spinner.stop("请重新");
-            process.exit();
-        });
+        hint.fail(spinner, `自动更新失败，请手动更新到${version}版本`);
+        spinner.start("\n更新中"+"\n"+stdout);
+        // spinner.stop("请重新");
+        process.exit();
 
 
     })
@@ -61,12 +55,12 @@ new Promise(function (resolve, reject) {
                     question.name,
                     question.version,
                     question.port,
-                    question.richie_package_manager,
+                    question.package_manager,
                 ]).then(function (answers) {
                     answers_all.name = answers.name;
                     answers_all.version = answers.version;
                     answers_all.port = answers.port;
-                    answers_all.richie_package_manager = answers.richie_package_manager;
+                    answers_all.package_manager = answers.package_manager;
                     resolve();
                 });
             }
@@ -97,7 +91,7 @@ new Promise(function (resolve, reject) {
                 let _data = JSON.parse(data.toString());
                 _data.name = answers_all.name;
                 _data.version = answers_all.version;
-                _data.port = answers_all.port;
+                _data.scripts.start = "cross-env APP_TYPE=site umi dev --port=9"+answers_all.port;
                 let str = JSON.stringify(_data, null, 4);
                 // 写入
                 fs.writeFile(`${process.cwd()}/${answers_all.name}/package.json`, str, function (err) {
@@ -115,14 +109,11 @@ new Promise(function (resolve, reject) {
     // 安装项目依赖
     .then(function () {
         return new Promise((resolve, reject) => {
-            let installStr = `正在使用${chalk.greenBright(answers_all.richie_package_manager)}安装依赖...`;
+            let installStr = `正在使用 ${chalk.magenta(answers_all.package_manager)} 安装依赖...`;
             spinner.start([installStr]);
             // 根据不同的选项选择安装方式
             let type_install = '';
-            switch (answers_all.richie_package_manager) {
-                case 'yarn':
-                    type_install = 'yarn';
-                    break;
+            switch (answers_all.package_manager) {
                 case 'cnpm':
                     type_install = 'cnpm install --no-optional';
                     break;
@@ -132,7 +123,7 @@ new Promise(function (resolve, reject) {
             }
             cmdSystem([`cd ${answers_all.name}`, type_install], spinner, installStr)
                 .then(() => {
-                    spinner.succeed(['项目依赖安装完成.']);
+                    spinner.succeed(['项目依赖安装完成!']);
                     spinner.clear();
                     resolve()
                 })
@@ -143,9 +134,9 @@ new Promise(function (resolve, reject) {
     .then(function () {
         setTimeout(function () {
             hint.line()
-            hint.print('green', `🎉  欢迎使用richie-cli,请继续完成以下操作:`, 'bottom');
+            hint.print('magenta', `🎉🎉🎉  欢迎使用richie-cli,你可以☟:`, 'bottom');
             hint.print('cyan', ` $ cd ${answers_all.name}`);
-            hint.print('cyan', ` $ npm run dev`, 'bottom');
+            hint.print('cyan', ` $ npm start`, 'bottom');
             process.exit()
         }, 500)
     })

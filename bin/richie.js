@@ -31,7 +31,7 @@ commander
 
 new Promise(function (resolve, reject) {
     // 清空控制台，并输出版本信息
-    clearConsole('magenta', `RICHIE-CLI v${richie_package.version}`);
+    clearConsole('magenta', `Richie-Cli@${richie_package.version}`);
     console.info('');
     // 检测是否为最新版本
     spinner.start('正在查询richie-cli最新版本');
@@ -39,9 +39,7 @@ new Promise(function (resolve, reject) {
         spinner.stop();
         resolve()
     }, (version) => {
-        hint.fail(spinner, `自动更新失败，请手动更新到${version}版本`);
-        spinner.start("\n更新中"+"\n"+stdout);
-        // spinner.stop("请重新");
+        hint.fail(spinner, `请手动更新到${version}版本`);
         process.exit();
 
 
